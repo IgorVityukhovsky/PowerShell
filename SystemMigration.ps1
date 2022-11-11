@@ -25,7 +25,7 @@ $Nodes = $Nodes.replace(" 824", " VLAN824_fnr_L_D")
 
 $ErrorActionPreference = "SilentlyContinue"
 
-#Генерируем файл куда будем складывать инфу
+#Р“РµРЅРµСЂРёСЂСѓРµРј С„Р°Р№Р» РєСѓРґР° Р±СѓРґРµРј СЃРєР»Р°РґС‹РІР°С‚СЊ РёРЅС„Сѓ
 
 set-content -path "$dir\SystemMigration.csv" -value "Number; System; Name; VM_IP; DNS_IP; DHCP; Target_VLAN; Fact_VLAN"
 ForEach ($Line in $Nodes) {
@@ -33,7 +33,7 @@ ForEach ($Line in $Nodes) {
     $Name = $Line[0]
     $Target_VLAN = $Line[1]
     
-    Write-Host "Собираю информацию о $Name"
+    Write-Host "РЎРѕР±РёСЂР°СЋ РёРЅС„РѕСЂРјР°С†РёСЋ Рѕ $Name"
 
     $DNS = Get-DnsServerResourceRecord -ZoneName $ZoneName -ComputerName $DNSServer -Node $Name -RRType A -ErrorAction SilentlyContinue
     $DNS_IP = $DNS.RecordData.IPv4Address.IPAddressToString
@@ -42,7 +42,7 @@ ForEach ($Line in $Nodes) {
     $VMinfo = Get-VM $Name
     $VM_IP = $VMinfo.Guest.IPAddress | Where-Object -FilterScript { $PSItem.Length -le 16 }
     
-    #если IP машины и DNS не соответствуют, закомментировать строку
+    #РµСЃР»Рё IP РјР°С€РёРЅС‹ Рё DNS РЅРµ СЃРѕРѕС‚РІРµС‚СЃС‚РІСѓСЋС‚, Р·Р°РєРѕРјРјРµРЅС‚РёСЂРѕРІР°С‚СЊ СЃС‚СЂРѕРєСѓ
     
     if ($VM_IP.Count -gt 1) { $VM_IP = $VM_IP[0] }
     
@@ -63,7 +63,7 @@ ForEach ($Line in $Nodes) {
 $info = Import-Csv -Delimiter ";" -Path "$dir\SystemMigration.csv"
 $info | Format-Table -AutoSize
 
-#Выбор действий
+#Р’С‹Р±РѕСЂ РґРµР№СЃС‚РІРёР№
 
 Write-Host "1 - Change VLAN: ALL"
 Write-Host "2 - Change VLAN: Windows"
@@ -132,7 +132,7 @@ else {
                                 }
                             }
                         }
-                        $Message = "VLAN сменены, DNS обновлены, созданы резервации для $ReservationAccess"
+                        $Message = "VLAN СЃРјРµРЅРµРЅС‹, DNS РѕР±РЅРѕРІР»РµРЅС‹, СЃРѕР·РґР°РЅС‹ СЂРµР·РµСЂРІР°С†РёРё РґР»СЏ $ReservationAccess"
                         Set-Clipboard $Message
                         Write-Host -Object "$Message" -BackgroundColor Black -ForegroundColor Green
                     }
