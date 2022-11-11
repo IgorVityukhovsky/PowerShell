@@ -20,10 +20,12 @@ $Nodes = $Nodes.replace(" 831", " VLAN831_L_D")
 $Nodes = $Nodes.replace(" 475", " VLAN475_win")
 $Nodes = $Nodes.replace(" 187", " VLAN187_temp_L")
 $Nodes = $Nodes.replace(" 925", " VLAN925_loymax_L")
+$Nodes = $Nodes.replace(" 822", " VLAN822_rhel_L_D")
+$Nodes = $Nodes.replace(" 824", " VLAN824_fnr_L_D")
 
 $ErrorActionPreference = "SilentlyContinue"
 
-#Р“РµРЅРµСЂРёСЂСѓРµРј С„Р°Р№Р» РєСѓРґР° Р±СѓРґРµРј СЃРєР»Р°РґС‹РІР°С‚СЊ РёРЅС„Сѓ
+#Генерируем файл куда будем складывать инфу
 
 set-content -path "$dir\SystemMigration.csv" -value "Number; System; Name; VM_IP; DNS_IP; DHCP; Target_VLAN; Fact_VLAN"
 ForEach ($Line in $Nodes) {
@@ -31,7 +33,7 @@ ForEach ($Line in $Nodes) {
     $Name = $Line[0]
     $Target_VLAN = $Line[1]
     
-    Write-Host "РЎРѕР±РёСЂР°СЋ РёРЅС„РѕСЂРјР°С†РёСЋ Рѕ $Name"
+    Write-Host "Собираю информацию о $Name"
 
     $DNS = Get-DnsServerResourceRecord -ZoneName $ZoneName -ComputerName $DNSServer -Node $Name -RRType A -ErrorAction SilentlyContinue
     $DNS_IP = $DNS.RecordData.IPv4Address.IPAddressToString
@@ -40,7 +42,7 @@ ForEach ($Line in $Nodes) {
     $VMinfo = Get-VM $Name
     $VM_IP = $VMinfo.Guest.IPAddress | Where-Object -FilterScript { $PSItem.Length -le 16 }
     
-    #РµСЃР»Рё IP РјР°С€РёРЅС‹ Рё DNS РЅРµ СЃРѕРѕС‚РІРµС‚СЃС‚РІСѓСЋС‚, Р·Р°РєРѕРјРјРµРЅС‚РёСЂРѕРІР°С‚СЊ СЃС‚СЂРѕРєСѓ
+    #если IP машины и DNS не соответствуют, закомментировать строку
     
     if ($VM_IP.Count -gt 1) { $VM_IP = $VM_IP[0] }
     
@@ -61,7 +63,7 @@ ForEach ($Line in $Nodes) {
 $info = Import-Csv -Delimiter ";" -Path "$dir\SystemMigration.csv"
 $info | Format-Table -AutoSize
 
-#Р’С‹Р±РѕСЂ РґРµР№СЃС‚РІРёР№
+#Выбор действий
 
 Write-Host "1 - Change VLAN: ALL"
 Write-Host "2 - Change VLAN: Windows"
@@ -130,7 +132,7 @@ else {
                                 }
                             }
                         }
-                        $Message = "VLAN СЃРјРµРЅРµРЅС‹, DNS РѕР±РЅРѕРІР»РµРЅС‹, СЃРѕР·РґР°РЅС‹ СЂРµР·РµСЂРІР°С†РёРё РґР»СЏ $ReservationAccess"
+                        $Message = "VLAN сменены, DNS обновлены, созданы резервации для $ReservationAccess"
                         Set-Clipboard $Message
                         Write-Host -Object "$Message" -BackgroundColor Black -ForegroundColor Green
                     }
