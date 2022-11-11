@@ -12,16 +12,19 @@ $Nodes = Get-Content "$dir\SystemMigration.txt"
 $n = 0
 
 $Nodes = $Nodes -replace '[^a-z0-9\.\-@_ =]'
-$Nodes = $Nodes.replace(" 823", " VLAN823_win_L_D") 
+$Nodes = $Nodes.replace(" 187", " VLAN187_temp_L")
 $Nodes = $Nodes.replace(" 190", " VLAN190_win")
+$Nodes = $Nodes.replace(" 475", " VLAN475_win")
 $Nodes = $Nodes.replace(" 820", " VLAN820_app_L_D")
 $Nodes = $Nodes.replace(" 821", " VLAN821_ora_L_D")
-$Nodes = $Nodes.replace(" 831", " VLAN831_L_D")
-$Nodes = $Nodes.replace(" 475", " VLAN475_win")
-$Nodes = $Nodes.replace(" 187", " VLAN187_temp_L")
-$Nodes = $Nodes.replace(" 925", " VLAN925_loymax_L")
 $Nodes = $Nodes.replace(" 822", " VLAN822_rhel_L_D")
+$Nodes = $Nodes.replace(" 823", " VLAN823_win_L_D") 
 $Nodes = $Nodes.replace(" 824", " VLAN824_fnr_L_D")
+$Nodes = $Nodes.replace(" 831", " VLAN831_L_D")
+$Nodes = $Nodes.replace(" 925", " VLAN925_loymax_L")
+
+
+
 
 $ErrorActionPreference = "SilentlyContinue"
 
