@@ -12,6 +12,7 @@ $Nodes = Get-Content "$dir\SystemMigration.txt"
 $n = 0
 
 $Nodes = $Nodes -replace '[^a-z0-9\.\-@_ =]'
+$Nodes = $Nodes.replace(" 139", " VLAN139_win_D") 
 $Nodes = $Nodes.replace(" 187", " VLAN187_temp_L")
 $Nodes = $Nodes.replace(" 190", " VLAN190_win")
 $Nodes = $Nodes.replace(" 475", " VLAN475_win")
