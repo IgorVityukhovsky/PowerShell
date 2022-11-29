@@ -8,6 +8,8 @@ $DNSServer = $Env:DNSServer
 $DHCPServer = $Env:DHCPServer
 $ZoneName = "x5.ru"
 
+$Reservations = Get-DhcpServerv4Scope -Computer $DHCPServer | Get-DhcpServerv4Reservation -Computer $DHCPServer
+
 ForEach ($NodeToDelete in $NodesToDelete)
 {
 $NodeDNS = Get-DnsServerResourceRecord -ZoneName $ZoneName -ComputerName $DNSServer -Node $NodeToDelete -RRType A -ErrorAction SilentlyContinue
@@ -62,6 +64,19 @@ Get-ADComputer -Identity $NodeToDelete | Remove-ADObject -Recursive -Confirm:$fa
 catch
 {"Не найдена УЗ компьютера $NodeToDelete" >> V:\My\Компы\RemoveCompLOGS.txt}
 
+#Удаляем резервации по имени машины
+
+$Reservation = $Reservations | Where-Object { $_.Name -eq $NodeToDelete+".x5.ru" }
+
+
+if ($Reservation) {
+    $Reservation | Remove-DhcpServerv4Reservation -Computer $DHCPServer
+    "Удалена DHCP резервация $NodeToDelete" >> V:\My\Компы\RemoveCompLOGS.txt
+
+  } else {
+    "Не найдена DHCP резервация $NodeToDelete" >> V:\My\Компы\RemoveCompLOGS.txt
+}
+
 #Продолжаем скрипт только в случае найденной DNS-записи
 if($NodeDNS -ne $null)
 {
@@ -108,8 +123,3 @@ else
 }
 }
 }
-
-
-
-
-
